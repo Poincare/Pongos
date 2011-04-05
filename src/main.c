@@ -1,36 +1,36 @@
-#include <stdio.h>
-#include <stdlib.h>
-
 #include "SDL/SDL.h"
 
-/* defines init functions, not much */
-#include "init.h"
+#include "structs.h"
 
-/* defines structures like Paddle and Ball */
-#include "structures.h" 
+#define SCREEN_WIDTH 640
+#define SCREEN_HEIGHT 480
 
-/* defines simple utilities, like blitting a Paddle struct */
-#include "util.h"
+#define PADDLE_HEIGHT 30
+#define PADDLE_WIDTH 90
 
 int main (void) {
-	/* initialize variables, call utilities, functions for this held in init.c */
-	startSDL();
-	SDL_Surface *screen = getScreen();
-
+	/* Variable declarations */
 	Paddle mainPaddle;
 	Ball mainBall;
+	SDL_Surface *screen = NULL;
+	
+	/* Basic setup */
+	SDL_Init(SDL_INIT_EVERYTHING);
+	screen = SDL_SetVideoMode(SCREEN_WIDTH,SCREEN_HEIGHT, 32, SDL_SWSURFACE);
 
-	mainPaddle.image = SDL_LoadBMP("../images/paddle.bmp");
-	mainBall.image = SDL_LoadBMP("../images/ball.bmp");
+	/* load images, fill out structs, blit them onto the screen */
+	mainPaddle.image = SDL_LoadBMP("paddle.bmp");
+	mainPaddle.pos.x = SCREEN_WIDTH/2 - PADDLE_WIDTH;
+	mainPaddle.pos.y = SCREEN_HEIGHT - PADDLE_HEIGHT;
+	SDL_BlitSurface(mainPaddle.image, NULL, screen, &(mainPaddle.pos));
 
-	mainPaddle.pos.x = SCREEN_WIDTH/2;
-	mainPaddle.pos.y = 0;
-
+	mainBall.image = SDL_LoadBMP("ball.bmp");
 	mainBall.pos.x = SCREEN_WIDTH/2;
 	mainBall.pos.y = SCREEN_HEIGHT/2;
+	SDL_BlitSurface(mainBall.image, NULL, screen, &(mainBall.pos));
 
-	blitPaddle(&mainPaddle, screen);	
-	/* call gameloop, defined in game.c */
-		
+	SDL_Flip(screen);
+	
+	SDL_Delay(2000);
 	return 0;
 }
