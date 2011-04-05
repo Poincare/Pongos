@@ -1,4 +1,5 @@
 #include "SDL/SDL.h"
+#define STRUCTS_H 1
 
 typedef struct {
 	SDL_Surface *image;

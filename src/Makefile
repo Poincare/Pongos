@@ -1,4 +1,4 @@
 all: 
-	gcc main.c -lSDL
+	gcc gameloop.c main.c -lSDL
 clean:
 	rm a.out

@@ -1,12 +1,12 @@
 #include "SDL/SDL.h"
 
+#ifndef STRUCTS_H
 #include "structs.h"
+#endif
 
-#define SCREEN_WIDTH 640
-#define SCREEN_HEIGHT 480
-
-#define PADDLE_HEIGHT 30
-#define PADDLE_WIDTH 90
+#ifndef SIZES_H
+#include "sizes.h"
+#endif
 
 int main (void) {
 	/* Variable declarations */
@@ -28,6 +28,10 @@ int main (void) {
 	mainBall.pos.x = SCREEN_WIDTH/2;
 	mainBall.pos.y = SCREEN_HEIGHT/2;
 	SDL_BlitSurface(mainBall.image, NULL, screen, &(mainBall.pos));
+
+	/* call game loop here, defined in gameloop.c, handover all the filled structs */
+	initGameloop(&mainPaddle, &mainBall, screen);	
+	runGameloop();
 
 	SDL_Flip(screen);
 	
