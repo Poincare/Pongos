@@ -29,12 +29,12 @@ int main (void) {
 	mainBall.pos.y = SCREEN_HEIGHT/2;
 	SDL_BlitSurface(mainBall.image, NULL, screen, &(mainBall.pos));
 
+	SDL_Flip(screen);
+
 	/* call game loop here, defined in gameloop.c, handover all the filled structs */
 	initGameloop(&mainPaddle, &mainBall, screen);	
 	runGameloop();
 
-	SDL_Flip(screen);
-	
 	SDL_Delay(2000);
 	return 0;
 }
