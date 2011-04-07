@@ -9,4 +9,5 @@ typedef struct {
 typedef struct {
 	SDL_Surface *image;
 	SDL_Rect pos; /* also has width and height info */
+	int structs;
 }Ball;

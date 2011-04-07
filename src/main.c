@@ -16,7 +16,7 @@ int main (void) {
 	
 	/* Basic setup */
 	SDL_Init(SDL_INIT_EVERYTHING);
-	screen = SDL_SetVideoMode(SCREEN_WIDTH,SCREEN_HEIGHT, 32, SDL_SWSURFACE);
+	screen = SDL_SetVideoMode(SCREEN_WIDTH,SCREEN_HEIGHT, 32, SDL_FULLSCREEN|SDL_DOUBLEBUF );
 
 	/* load images, fill out structs, blit them onto the screen */
 	mainPaddle.image = SDL_LoadBMP("paddle.bmp");
@@ -35,6 +35,5 @@ int main (void) {
 	initGameloop(&mainPaddle, &mainBall, screen);	
 	runGameloop();
 
-	SDL_Delay(2000);
 	return 0;
 }
