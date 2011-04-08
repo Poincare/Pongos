@@ -8,5 +8,5 @@
 
 #define BALL_SIZE 29 /* Ball image MUST be a square */
 
-#define OVER_WIDTH 640
-#define OVER_HEIGHT 480
+#define OVER_WIDTH 640 /* OVER images are images that go over everything else */
+#define OVER_HEIGHT 480 /* For example, gamover.bmp and 3.bmp */

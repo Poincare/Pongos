@@ -9,6 +9,10 @@
 #include "sizes.h"
 #endif
 
+#ifndef UTIL_H
+#include "util.h"
+#endif 
+
 /* main structure, but only for this file */
 /* Sort of like an Object, but, no OO syntax */
 typedef struct {
@@ -74,6 +78,10 @@ void incrSpeed() {
 	}
 }
 
+void ballHitGround() {
+	SDL_Delay(1000);
+}
+
 int moveBall() {
 	/* check if the ball is colliding with the two side walls*/
 	if(glp.mainBall->pos.x <= 0 || glp.mainBall->pos.x >= SCREEN_WIDTH-BALL_SIZE) {
@@ -100,6 +108,7 @@ int moveBall() {
         "game over" message.
         */
 	else if(glp.mainBall->pos.y >= SCREEN_HEIGHT) {
+		ballHitGround();
 		return 0;
 	}
 	
@@ -141,8 +150,8 @@ int runGameloop() {
 			}
 		}
 		/* clear the screen */
-		SDL_FillRect( SDL_GetVideoSurface(), NULL, 0 );
-		
+		clearScreen(glp.screen);
+	
 		/* update the paddle's coordinates */
 		(glp.mainPaddle)->pos.x = mouse_pos;			
 

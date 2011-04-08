@@ -9,3 +9,4 @@
 void blitBall(Ball *b, SDL_Surface *screen);
 void blitPaddle(Paddle *p, SDL_Surface *screen);
 
+void clearScreen(SDL_Surface *screen);
