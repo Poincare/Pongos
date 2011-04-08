@@ -3,7 +3,7 @@
 #define SCREEN_WIDTH 1920 
 #define SCREEN_HEIGHT 1080
 
-#define PADDLE_WIDTH 90
-#define PADDLE_HEIGHT 30
+#define PADDLE_WIDTH 91
+#define PADDLE_HEIGHT 10
 
-#define BALL_DEM 30 /* Ball image MUST be a square */
+#define BALL_SIZE 29 /* Ball image MUST be a square */

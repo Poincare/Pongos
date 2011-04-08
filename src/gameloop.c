@@ -12,25 +12,66 @@ typedef struct {
 	Ball *mainBall;
 	Paddle *mainPaddle;
 	SDL_Surface *screen;
+	int score;
+		
 }Gameloop;
 
-Gameloop glp;
+static Gameloop glp;
 
 void initGameloop(Paddle *p, Ball *b, SDL_Surface *s) {
 	glp.mainBall = b;
 	glp.mainPaddle = p;
 	glp.screen = s;
+	glp.score = 0;
 }
 
-void moveBall() {
+int oldmoveBall() {
 	/* check if the ball is colliding with the horizontal walls */
-	if(glp.mainBall->pos.x <= 0) {
-
+	if(glp.mainBall->pos.y >= SCREEN_HEIGHT) {
+		return 0;
 	}
+	if(glp.mainBall->pos.y >= glp.mainPaddle->pos.y-BALL_SIZE && glp.mainBall->pos.x >= glp.mainPaddle->pos.x && glp.mainBall->pos.x <= glp.mainPaddle->pos.x+PADDLE_WIDTH) {
+
+		glp.mainBall->yspeed = -(glp.mainBall->yspeed);
+		glp.score++;
+	} 
+
+	if(glp.mainBall->pos.y <= BALL_SIZE) {
+		glp.mainBall->yspeed = -(glp.mainBall->yspeed);
+	}	
 	/* check if the ball is colliding with the vertical walls */
+	if(glp.mainBall->pos.x <= 0 || glp.mainBall->pos.x >= SCREEN_WIDTH-BALL_SIZE) {
+		glp.mainBall->xspeed = -(glp.mainBall->xspeed);
+	}
+ 
+	glp.mainBall->pos.x += glp.mainBall->xspeed;
+	glp.mainBall->pos.y += glp.mainBall->yspeed;
+	return 1;
 }
 
-void runGameloop() {
+int moveBall() {
+	if(glp.mainBall->pos.x <= 0 || glp.mainBall->pos.x >= SCREEN_WIDTH-BALL_SIZE) {
+		glp.mainBall->xspeed = -(glp.mainBall->xspeed); 
+ 	}
+
+	/* hit the upper wall */	
+	if(glp.mainBall->pos.y <= BALL_SIZE) {
+		glp.mainBall->yspeed = -(glp.mainBall->yspeed);
+	}
+	
+	if(glp.mainBall->pos.y >= SCREEN_HEIGHT-PADDLE_HEIGHT-BALL_SIZE-3 && glp.mainBall->pos.x <= glp.mainPaddle->pos.x+PADDLE_WIDTH && glp.mainBall->pos.x >= glp.mainPaddle->pos.x) {
+		glp.mainBall->yspeed = -(glp.mainBall->yspeed);
+	}
+
+	else if(glp.mainBall->pos.y >= SCREEN_HEIGHT) {
+		return 0;
+	}
+	
+	glp.mainBall->pos.x += glp.mainBall->xspeed;
+	glp.mainBall->pos.y += glp.mainBall->yspeed; 
+}
+
+int runGameloop() {
 	int done = 0;
 	SDL_Event event;
 
@@ -62,12 +103,14 @@ void runGameloop() {
 		(glp.mainPaddle)->pos.x = mouse_pos;			
 
 		/* update the ball's coordinates */
-		moveBall();
+		if(!moveBall()) {
+			return glp.score;
+		}
 		
 		/* blit the ball and the paddle */
 		blitBall(glp.mainBall, glp.screen);
 		blitPaddle(glp.mainPaddle, glp.screen);
 		SDL_Flip(glp.screen);
 	}
-	SDL_Quit();
+	return glp.score;
 }
