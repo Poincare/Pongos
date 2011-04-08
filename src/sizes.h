@@ -7,3 +7,6 @@
 #define PADDLE_HEIGHT 10
 
 #define BALL_SIZE 29 /* Ball image MUST be a square */
+
+#define OVER_WIDTH 640
+#define OVER_HEIGHT 480

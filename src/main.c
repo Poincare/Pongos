@@ -8,7 +8,7 @@
 #include "sizes.h"
 #endif
 
-#define START_SPEED 5 
+#define START_SPEED 3 
 
 int main (void) {
 	/* Variable declarations */
@@ -19,8 +19,8 @@ int main (void) {
 	SDL_Surface *gameover = NULL;
 
 	SDL_Rect go_rect;
-	go_rect.x = SCREEN_WIDTH/2;
-	go_rect.y = SCREEN_HEIGHT/2;
+	go_rect.x = (int) (SCREEN_WIDTH-OVER_WIDTH)/2;
+	go_rect.y = (int) (SCREEN_HEIGHT-OVER_HEIGHT)/2;
 	
 	/* Basic setup */
 	SDL_Init(SDL_INIT_EVERYTHING);
@@ -55,9 +55,9 @@ int main (void) {
 	SDL_FillRect( SDL_GetVideoSurface(), NULL, 0 );
 	SDL_BlitSurface(gameover, NULL, screen, &go_rect);
 	SDL_Flip(screen);
-	SDL_Delay(1000);
+	SDL_Delay(3000);
 	SDL_Quit();
-
+	
 	printf("Score: %d\n", score);
 	return 0;
 }
