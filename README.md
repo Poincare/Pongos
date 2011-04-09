@@ -1,7 +1,7 @@
 Pongos
 ================
 
-What is it?
+#What is it?
 
 * Pongos is a very hard version of Pong.
 * I don't get very far with it
@@ -9,10 +9,10 @@ What is it?
 * Its written in C, with some OO (without OO syntax).
 * Its pretty well commented.
 
-How do I get it running?
+#How do I get it running?
 
--You have to build it yourself.
--For UNIX based systems (Mac OS X, Linux, etc.):
+* You have to build it yourself.
+* For UNIX based systems (Mac OS X, Linux, etc.):
 	cd pongos #or wherever the heck you've saved it	
 	cd src 
 	make
