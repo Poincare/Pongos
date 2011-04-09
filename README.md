@@ -4,7 +4,7 @@ Pongos
 #What is it?
 
 * Pongos is a very hard version of Pong.
-* I don't get very far with it
+* I don't go very far when I play, so report any bugs 
 * If you're a developer, and you want to make it easier, fork it
 * Its written in C, with some OO (without OO syntax).
 * Its pretty well commented.
