@@ -1,5 +1,18 @@
-Very, very simple pong game.
-Play it, its fun.
+Pongos
+================
 
-Go into the src/ directory, type in make, and you should get a a.out file.
-Execute the file, and enjoy.
+What is it?
+-Pongos is a very hard version of Pong.
+-I don't get very far with it.
+-If you're a developer, and you want to make it easier, fork it.
+-Its written in C, with some OO (without OO syntax).
+-Its pretty well commented.
+
+How do I get it running?
+-You have to build it yourself.
+-For UNIX based systems (Mac OS X, Linux, etc.):
+	cd pongos #or wherever the heck you've saved it	
+	cd src 
+	make
+	./a.out
+
