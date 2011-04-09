@@ -2,11 +2,11 @@ Pongos
 ================
 
 What is it?
--Pongos is a very hard version of Pong.
--I don't get very far with it.
--If you're a developer, and you want to make it easier, fork it.
--Its written in C, with some OO (without OO syntax).
--Its pretty well commented.
+* Pongos is a very hard version of Pong.
+* I don't get very far with it
+* If you're a developer, and you want to make it easier, fork it
+* Its written in C, with some OO (without OO syntax).
+* Its pretty well commented.
 
 How do I get it running?
 -You have to build it yourself.
