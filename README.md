@@ -14,7 +14,7 @@ Pongos
 * You have to build it yourself.
 * For UNIX based systems (Mac OS X, Linux, etc.):
 
-	cd pongos #or wherever the heck you've saved it	
+	cd pongos	
 	cd src 
 	make
 	./a.out
