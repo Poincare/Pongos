@@ -10,71 +10,99 @@
 
 #define START_SPEED 3 
 
-int main (void) {
-	/* Variable declarations */
-	Paddle mainPaddle;
-	Ball mainBall;
+/* variable declarations */
+static Paddle mainPaddle;
+static Ball mainBall;
 
-	SDL_Surface *screen = NULL;
-	SDL_Surface *gameover = NULL;
+static SDL_Surface *screen = NULL;
+static SDL_Surface *gameover = NULL;
 
-	SDL_Surface *three = NULL;
-	SDL_Surface *two = NULL;
-	SDL_Surface *one = NULL;
+static SDL_Surface *three = NULL;
+static SDL_Surface *two = NULL;
+static SDL_Surface *one = NULL;
 
-	SDL_Surface *controls = NULL;
+static SDL_Surface *controls = NULL;
 
-	int done = 0;
+static int done = 0;
+
+static SDL_Rect go_rect;
+
+static SDL_Rect countdown_rect;
+
+
+/* self-explanatory */
+void setupRects(void) {
 	/* center the gameover message (and, this can be used for controls) */
-	SDL_Rect go_rect;
-	go_rect.x = (int) (SCREEN_WIDTH-OVER_WIDTH)/2;
-	go_rect.y = (int) (SCREEN_HEIGHT-OVER_HEIGHT)/2;
-	
-	/* center the countdown rect, which centers 3, 2, 1 */
-	SDL_Rect countdown_rect;
-	countdown_rect.x = (int) (SCREEN_WIDTH-OVER_WIDTH)/2;
-	countdown_rect.y = (int) (SCREEN_HEIGHT-OVER_HEIGHT)/2;	
+        go_rect.x = (int) (SCREEN_WIDTH-OVER_WIDTH)/2;
+        go_rect.y = (int) (SCREEN_HEIGHT-OVER_HEIGHT)/2;
 
-	/* Basic setup */
+        /* center the countdown rect, which centers 3, 2, 1 */
+        countdown_rect.x = (int) (SCREEN_WIDTH-OVER_WIDTH)/2;
+        countdown_rect.y = (int) (SCREEN_HEIGHT-OVER_HEIGHT)/2;
+}
+
+void startSDL(void) {
 	SDL_Init(SDL_INIT_EVERYTHING);
-	screen = SDL_SetVideoMode(SCREEN_WIDTH,SCREEN_HEIGHT, 32, SDL_DOUBLEBUF|SDL_HWSURFACE );
+        screen = SDL_SetVideoMode(SCREEN_WIDTH,SCREEN_HEIGHT, 32, SDL_DOUBLEBUF|SDL_HWSURFACE );
+}
 
-	/* load images, fill out structs, blit them onto the screen */
+void loadImages(void) {
 	gameover = SDL_LoadBMP("gameover.bmp");
-
 	controls = SDL_LoadBMP("controls.bmp");
-	SDL_BlitSurface(controls, NULL, screen, &(go_rect));
-	SDL_Flip(screen);
-	SDL_Delay(3000);
-
-	clearScreen(screen);
-
+	
 	three = SDL_LoadBMP("3.bmp");
 	two = SDL_LoadBMP("2.bmp");
 	one = SDL_LoadBMP("1.bmp");
-	
+
 	mainPaddle.image = SDL_LoadBMP("paddle.bmp");
 	mainBall.image = SDL_LoadBMP("ball.bmp");
+}
+
+void showControls(void) {
+	SDL_BlitSurface(controls, NULL, screen, &(go_rect));
+	SDL_Flip(screen);
+	SDL_Delay(3000);
+}
+
+void countdown(void) {
+
+	SDL_BlitSurface(three, NULL, screen, &(countdown_rect));
+	SDL_Flip(screen);
+	SDL_Delay(1000);
+
+	clearScreen(screen);
+
+	SDL_BlitSurface(two, NULL, screen, &(countdown_rect));
+	SDL_Flip(screen);
+	SDL_Delay(1000);
+
+	clearScreen(screen);
+
+	SDL_BlitSurface(one, NULL, screen, &(countdown_rect));
+	SDL_Flip(screen);
+	SDL_Delay(1000);
+	
+	clearScreen(screen);
+}
+
+int main (void) {
+	/* center messages, etc. */
+	setupRects();
+
+	/* Basic setup */
+	startSDL();
+
+	/* load images */
+	loadImages();
+
+	/* blit them onto the screen */
+	showControls();
+
+	clearScreen(screen);
 
 	while(!done) {
 		/* go 3, 2, and 1 */
-		SDL_BlitSurface(three, NULL, screen, &(countdown_rect));
-		SDL_Flip(screen);
-		SDL_Delay(1000);
-
-		clearScreen(screen);
-
-		SDL_BlitSurface(two, NULL, screen, &(countdown_rect));
-		SDL_Flip(screen);	
-		SDL_Delay(1000);
-
-		clearScreen(screen);
-
-		SDL_BlitSurface(one, NULL, screen, &(countdown_rect));
-		SDL_Flip(screen);
-		SDL_Delay(1000);
-	
-		clearScreen(screen);
+		countDown();
 
 		mainPaddle.pos.x = SCREEN_WIDTH/2 - PADDLE_WIDTH;
 		mainPaddle.pos.y = SCREEN_HEIGHT - PADDLE_HEIGHT;
@@ -100,15 +128,9 @@ int main (void) {
 		SDL_FillRect( SDL_GetVideoSurface(), NULL, 0 );
 		SDL_BlitSurface(gameover, NULL, screen, &go_rect);
 		SDL_Flip(screen);
-		SDL_Delay(3000);
 
-		/* handle escape or space */
-		Uint8 *keystate = SDL_GetKeyState(NULL);
-		if(keystate[SDLK_SPACE]) {
-			done = 0;
-		}
-		else if(keystate[SDLK_ESCAPE]) {
-			done = 1;
+		if(!done) {
+			SDL_Delay(1000);
 		}
 		printf("Score: %d\n", score);
 	}
