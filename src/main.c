@@ -15,7 +15,6 @@ static Paddle mainPaddle;
 static Ball mainBall;
 
 static SDL_Surface *screen = NULL;
-static SDL_Surface *gameover = NULL;
 
 static SDL_Surface *three = NULL;
 static SDL_Surface *two = NULL;
@@ -43,11 +42,10 @@ void setupRects(void) {
 
 void startSDL(void) {
 	SDL_Init(SDL_INIT_EVERYTHING);
-        screen = SDL_SetVideoMode(SCREEN_WIDTH,SCREEN_HEIGHT, 32, SDL_DOUBLEBUF|SDL_HWSURFACE );
+        screen = SDL_SetVideoMode(SCREEN_WIDTH,SCREEN_HEIGHT, 32, SDL_DOUBLEBUF|SDL_HWSURFACE|SDL_FULLSCREEN );
 }
 
 void loadImages(void) {
-	gameover = SDL_LoadBMP("gameover.bmp");
 	controls = SDL_LoadBMP("controls.bmp");
 	
 	three = SDL_LoadBMP("3.bmp");
@@ -85,6 +83,26 @@ void countdown(void) {
 	clearScreen(screen);
 }
 
+void initiateImages(void) {
+
+	mainPaddle.pos.x = SCREEN_WIDTH/2 - PADDLE_WIDTH;
+	mainPaddle.pos.y = SCREEN_HEIGHT - PADDLE_HEIGHT;
+	SDL_BlitSurface(mainPaddle.image, NULL, screen, &(mainPaddle.pos));
+
+	mainBall.pos.x = SCREEN_WIDTH/2;
+	mainBall.pos.y = SCREEN_HEIGHT/2;
+
+	mainBall.xspeed = START_SPEED;
+	mainBall.yspeed = START_SPEED;
+
+	SDL_BlitSurface(mainPaddle.image, NULL, screen, &(mainPaddle.pos));
+        SDL_BlitSurface(mainBall.image, NULL, screen, &(mainBall.pos));
+
+	SDL_Flip(screen);
+	
+	SDL_Delay(1000);
+}
+
 int main (void) {
 	/* center messages, etc. */
 	setupRects();
@@ -100,40 +118,17 @@ int main (void) {
 
 	clearScreen(screen);
 
-	while(!done) {
-		/* go 3, 2, and 1 */
-		countDown();
+	/* go 3, 2, and 1 */
+	countdown();
 
-		mainPaddle.pos.x = SCREEN_WIDTH/2 - PADDLE_WIDTH;
-		mainPaddle.pos.y = SCREEN_HEIGHT - PADDLE_HEIGHT;
-		SDL_BlitSurface(mainPaddle.image, NULL, screen, &(mainPaddle.pos));
+	/* put the paddle and the ball in the initial position */
+	initiateImages();
 
-		mainBall.pos.x = SCREEN_WIDTH/2;
-		mainBall.pos.y = SCREEN_HEIGHT/2;
-
-		mainBall.xspeed = START_SPEED;
-		mainBall.yspeed = START_SPEED;
-
-		SDL_BlitSurface(mainPaddle.image, NULL, screen, &(mainPaddle.pos));
-		SDL_BlitSurface(mainBall.image, NULL, screen, &(mainBall.pos));
-
-		SDL_Flip(screen);
-
-		SDL_Delay(1000);
-
-		/* call game loop here, defined in gameloop.c, handover all the filled structs */
-		initGameloop(&mainPaddle, &mainBall, screen);	
-		int score = runGameloop();
+	/* call game loop here, defined in gameloop.c, handover all the filled structs */
+	initGameloop(&mainPaddle, &mainBall, screen);	
+	int score = runGameloop();
 	
-		SDL_FillRect( SDL_GetVideoSurface(), NULL, 0 );
-		SDL_BlitSurface(gameover, NULL, screen, &go_rect);
-		SDL_Flip(screen);
-
-		if(!done) {
-			SDL_Delay(1000);
-		}
-		printf("Score: %d\n", score);
-	}
+	printf("Score: %d\n", score);
 
 	SDL_Quit();
 	

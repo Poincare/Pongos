@@ -25,12 +25,28 @@ typedef struct {
 
 static Gameloop glp;
 
+static SDL_Surface *gameover = NULL;
+
 /* A constructor, but, without OO syntax from C++ (so we don't have the bloated crapware of C++) */
 void initGameloop(Paddle *p, Ball *b, SDL_Surface *s) {
 	glp.mainBall = b;
 	glp.mainPaddle = p;
 	glp.screen = s;
 	glp.score = 0;
+}
+
+void showGameover(void) {
+	gameover = SDL_LoadBMP("gameover.bmp");
+
+	SDL_Rect go_rect;
+	go_rect.x = (int) (SCREEN_WIDTH-OVER_WIDTH)/2;
+	go_rect.y = (int) (SCREEN_HEIGHT-OVER_HEIGHT)/2;
+
+        SDL_FillRect( SDL_GetVideoSurface(), NULL, 0 );
+        SDL_BlitSurface(gameover, NULL, glp.screen, &go_rect);
+        SDL_Flip(glp.screen);
+
+	SDL_Delay(1000);
 }
 
 /* DEPRECTATED METHOD */
@@ -129,6 +145,7 @@ int runGameloop() {
 	SDL_Event event;
 
 	int mouse_pos = 0;
+	int gameover= 0;
 
 	while(!done) {
 		if(SDL_PollEvent(&event)) {
@@ -144,7 +161,14 @@ int runGameloop() {
 				case SDL_KEYUP:
 					switch(event.key.keysym.sym) {
 						case SDLK_ESCAPE:
-							done = 1;
+							return glp.score;
+							break;
+
+						case SDLK_SPACE:
+							if(gameover) {
+								done = 0;	
+								gameover=0;
+							}
 							break;
 					}	
 			}
@@ -157,13 +181,22 @@ int runGameloop() {
 
 		/* update the ball's coordinates */
 		if(!moveBall()) {
-			return glp.score;
+			gameover = 1;
+			showGameover();
 		}
 		
 		/* blit the ball and the paddle */
 		blitBall(glp.mainBall, glp.screen);
 		blitPaddle(glp.mainPaddle, glp.screen);
 		SDL_Flip(glp.screen);
+	
+		if(gameover) {
+			showGameover();
+			break;
+		}
+		if(done) {
+			break;
+		}
 	}
-	return glp.score;
+	return glp.score;	
 }
