@@ -8,7 +8,6 @@
 #include "sizes.h"
 #endif
 
-#define START_SPEED 3 
 
 /* variable declarations */
 static Paddle mainPaddle;
@@ -42,7 +41,7 @@ void setupRects(void) {
 
 void startSDL(void) {
 	SDL_Init(SDL_INIT_EVERYTHING);
-        screen = SDL_SetVideoMode(SCREEN_WIDTH,SCREEN_HEIGHT, 32, SDL_DOUBLEBUF|SDL_HWSURFACE|SDL_FULLSCREEN );
+        screen = SDL_SetVideoMode(SCREEN_WIDTH,SCREEN_HEIGHT, 32, SDL_DOUBLEBUF|SDL_HWSURFACE);
 }
 
 void loadImages(void) {

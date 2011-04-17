@@ -20,19 +20,31 @@ typedef struct {
 	Paddle *mainPaddle;
 	SDL_Surface *screen;
 	int score;
-		
+	int gameover;
+	int done;
+	int restart;
+	
 }Gameloop;
 
 static Gameloop glp;
 
 static SDL_Surface *gameover = NULL;
 
+int checkExit(void *);
+
 /* A constructor, but, without OO syntax from C++ (so we don't have the bloated crapware of C++) */
 void initGameloop(Paddle *p, Ball *b, SDL_Surface *s) {
 	glp.mainBall = b;
 	glp.mainPaddle = p;
+
 	glp.screen = s;
 	glp.score = 0;
+
+	glp.gameover =0;
+
+	glp.restart = 0;
+
+	SDL_CreateThread(checkExit, NULL);
 }
 
 void showGameover(void) {
@@ -46,7 +58,6 @@ void showGameover(void) {
         SDL_BlitSurface(gameover, NULL, glp.screen, &go_rect);
         SDL_Flip(glp.screen);
 
-	SDL_Delay(1000);
 }
 
 /* DEPRECTATED METHOD */
@@ -140,14 +151,75 @@ int moveBall() {
 	}
 }
 
+void reinitImages(void) {
+
+        glp.mainPaddle->pos.x = SCREEN_WIDTH/2 - PADDLE_WIDTH;
+        glp.mainPaddle->pos.y = SCREEN_HEIGHT - PADDLE_HEIGHT;
+        SDL_BlitSurface(glp.mainPaddle->image, NULL, glp.screen, &(glp.mainPaddle->pos));
+
+        glp.mainBall->pos.x = SCREEN_WIDTH/2;
+        glp.mainBall->pos.y = SCREEN_HEIGHT/2;
+
+        glp.mainBall->xspeed = START_SPEED;
+        glp.mainBall->yspeed = START_SPEED;
+
+        SDL_BlitSurface(glp.mainBall->image, NULL, glp.screen, &(glp.mainBall->pos));
+
+        SDL_Flip(glp.screen);
+
+        SDL_Delay(1000);
+}
+
+int checkExit(void *unused) {
+	SDL_Event event;
+
+	while(1) {
+		SDL_PumpEvents();
+		if(SDL_PollEvent(&event)) {
+			switch(event.type) {
+				case SDL_KEYDOWN:
+				case SDL_KEYUP:
+					switch(event.key.keysym.sym) {
+						case SDLK_ESCAPE:
+							glp.done = 1;
+							break;
+						
+						case SDLK_SPACE:
+							glp.gameover = 0;
+							glp.done = 0;
+							glp.restart = 1;
+							break;
+					}
+				case SDL_QUIT:
+					glp.done = 1;
+					break;
+			}
+		}
+	}		
+}
+
 int runGameloop() {
-	int done = 0;
+	glp.done = 0;
+
 	SDL_Event event;
 
 	int mouse_pos = 0;
-	int gameover= 0;
+	terribleGotoJump:
+	if(glp.restart) {
+		reinitImages();
+	}
+	
+	while(!glp.done) {
+		if(glp.restart) {
+			goto terribleGotoJump;
+		}
+		/* clear the screen */
+		if(!glp.gameover) {
+	                clearScreen(glp.screen);
+		}
 
-	while(!done) {
+		SDL_PumpEvents();
+
 		if(SDL_PollEvent(&event)) {
 			switch(event.type) {
 				case SDL_MOUSEMOTION:
@@ -155,47 +227,31 @@ int runGameloop() {
 					break;
 
 				case SDL_QUIT:
-					done = 1;
+					return glp.score;
 					break;
-				case SDL_KEYDOWN:
-				case SDL_KEYUP:
-					switch(event.key.keysym.sym) {
-						case SDLK_ESCAPE:
-							return glp.score;
-							break;
 
-						case SDLK_SPACE:
-							if(gameover) {
-								done = 0;	
-								gameover=0;
-							}
-							break;
-					}	
 			}
 		}
-		/* clear the screen */
-		clearScreen(glp.screen);
-	
-		/* update the paddle's coordinates */
-		(glp.mainPaddle)->pos.x = mouse_pos;			
 
 		/* update the ball's coordinates */
 		if(!moveBall()) {
-			gameover = 1;
+			glp.gameover = 1;
 			showGameover();
+			continue;
 		}
-		
-		/* blit the ball and the paddle */
-		blitBall(glp.mainBall, glp.screen);
-		blitPaddle(glp.mainPaddle, glp.screen);
-		SDL_Flip(glp.screen);
 	
-		if(gameover) {
-			showGameover();
-			break;
+		if(!glp.gameover) {
+			/* update the paddle's coordinates */
+                	(glp.mainPaddle)->pos.x = mouse_pos;    
+	
+			/* blit the ball and the paddle */
+			blitBall(glp.mainBall, glp.screen);
+			blitPaddle(glp.mainPaddle, glp.screen);
+			SDL_Flip(glp.screen);
 		}
-		if(done) {
-			break;
+
+		if(glp.done) {
+			return glp.score;
 		}
 	}
 	return glp.score;	
