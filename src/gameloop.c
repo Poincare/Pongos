@@ -22,8 +22,6 @@ typedef struct {
 	int score;
 	int gameover;
 	int done;
-	int restart;
-	
 }Gameloop;
 
 static Gameloop glp;
@@ -42,7 +40,8 @@ void initGameloop(Paddle *p, Ball *b, SDL_Surface *s) {
 
 	glp.gameover =0;
 
-	glp.restart = 0;
+	glp.done = 0;
+	
 
 	SDL_CreateThread(checkExit, NULL);
 }
@@ -58,6 +57,7 @@ void showGameover(void) {
         SDL_BlitSurface(gameover, NULL, glp.screen, &go_rect);
         SDL_Flip(glp.screen);
 
+	SDL_Delay(3000);
 }
 
 /* DEPRECTATED METHOD */
@@ -183,12 +183,6 @@ int checkExit(void *unused) {
 						case SDLK_ESCAPE:
 							glp.done = 1;
 							break;
-						
-						case SDLK_SPACE:
-							glp.gameover = 0;
-							glp.done = 0;
-							glp.restart = 1;
-							break;
 					}
 				case SDL_QUIT:
 					glp.done = 1;
@@ -198,61 +192,64 @@ int checkExit(void *unused) {
 	}		
 }
 
-int runGameloop() {
-	glp.done = 0;
-
+int gameloopSec(void) {
+	int mouse_pos;
 	SDL_Event event;
-
-	int mouse_pos = 0;
-	terribleGotoJump:
-	if(glp.restart) {
-		reinitImages();
+	
+	
+	if(!glp.gameover) {
+		clearScreen(glp.screen);
 	}
 	
-	while(!glp.done) {
-		if(glp.restart) {
-			goto terribleGotoJump;
-		}
-		/* clear the screen */
-		if(!glp.gameover) {
-	                clearScreen(glp.screen);
-		}
+	SDL_PumpEvents();
 
-		SDL_PumpEvents();
-
-		if(SDL_PollEvent(&event)) {
+	if(SDL_PollEvent(&event)) {
 			switch(event.type) {
-				case SDL_MOUSEMOTION:
-					mouse_pos = event.motion.x;
-					break;
+					case SDL_MOUSEMOTION:
+							mouse_pos = event.motion.x;
+							break;
 
-				case SDL_QUIT:
-					return glp.score;
-					break;
+					case SDL_QUIT:
+							return glp.score;
+							break;
 
 			}
-		}
+	}
 
-		/* update the ball's coordinates */
-		if(!moveBall()) {
+	/* update the ball's coordinates */
+	if(!moveBall()) {
 			glp.gameover = 1;
 			showGameover();
-			continue;
-		}
-	
-		if(!glp.gameover) {
+			clearScreen(glp.screen);
+			reinitImages();
+			
+	}
+
+	if(!glp.gameover) {
 			/* update the paddle's coordinates */
-                	(glp.mainPaddle)->pos.x = mouse_pos;    
-	
+			(glp.mainPaddle)->pos.x = mouse_pos;
+
 			/* blit the ball and the paddle */
 			blitBall(glp.mainBall, glp.screen);
 			blitPaddle(glp.mainPaddle, glp.screen);
 			SDL_Flip(glp.screen);
-		}
+	}
 
-		if(glp.done) {
-			return glp.score;
-		}
+	if(glp.done) {
+		glp.done = 1;
+		return glp.score;
+	}
+
+}
+
+int runGameloop() {
+	SDL_Event event;
+
+	
+	int score;
+	
+	while(!glp.done) {
+		score = gameloopSec();
 	}
 	return glp.score;	
 }
