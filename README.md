@@ -15,9 +15,12 @@ Pongos
 * You'll need the developer version of libsdl
 * For UNIX based systems (Mac OS X, Linux, etc.):
 
-	cd pongos	
-	cd src 
-	make
-	./a.out
+	$ cd pongos	
+	
+        $ cd src 
+	
+        $ make
+	
+        $ ./a.out
 
 
